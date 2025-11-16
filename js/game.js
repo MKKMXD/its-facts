@@ -52,6 +52,25 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("restartBtn").addEventListener("click", restartGame);
 });
 
+document.getElementById("refreshWordBtn").addEventListener("click", () => {
+    refreshWord();
+});
+
+function refreshWord() {
+    const keys = Object.keys(wordsData);
+    let newWord;
+
+    do {
+        newWord = keys[Math.floor(Math.random() * keys.length)];
+    } while (newWord === currentWord && keys.length > 1); // исключаем текущее слово, если есть другие
+
+    currentWord = newWord;
+    document.getElementById("currentWord").textContent = currentWord;
+    document.getElementById("wordFact").textContent = ""; // факт скрыт
+
+    restartGame(false);
+}
+
 function goHome() {
     window.location.href = "index.html";
 }
@@ -186,10 +205,13 @@ function changeScore(player, delta, manual = false) {
     renderPlayers();
 }
 
-function restartGame() {
+function restartGame(isLastWord = true) {
     // суммируем текущие очки в общий счет сессии
-    db.sessionScore.p1 += db.players.p1.score;
-    db.sessionScore.p2 += db.players.p2.score;
+    
+    if (isLastWord) {
+        db.sessionScore.p1 += db.players.p1.score;
+        db.sessionScore.p2 += db.players.p2.score;
+    }
 
     // сброс очков текущей игры и таймеров
     db.players.p1.time = timerSec;
@@ -197,18 +219,21 @@ function restartGame() {
     db.players.p1.score = 0;
     db.players.p2.score = 0;
 
-    db.gameState.current = db.nextFirstPlayer;
+    if (isLastWord) {
+        db.gameState.current = db.nextFirstPlayer;
 
-    // меняем nextFirstPlayer на противоположного
-    db.nextFirstPlayer = db.nextFirstPlayer === "p1" ? "p2" : "p1";
-
+        // меняем nextFirstPlayer на противоположного
+        db.nextFirstPlayer = db.nextFirstPlayer === "p1" ? "p2" : "p1";
+    }
     saveDB(db);
 
     // показываем кнопки/игру
     document.getElementById("switchBtn").classList.remove("d-none");
     document.getElementById("restartBtn").classList.add("d-none");
 
-    loadWords();
+    if (isLastWord) {
+        loadWords();
+    }
     renderPlayers();
     renderSessionScore();
     highlightActive();
