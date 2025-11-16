@@ -4,6 +4,7 @@ let wordsData = {};
 let currentWord = "";
 const soundSwitch = new Audio("js/sounds/switch.mp3");
 const soundEnd = new Audio("js/sounds/end.mp3");
+let soundEnabled = false;
 
 
 // Загружаем JSON со словами
@@ -33,6 +34,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("switchBtn").addEventListener("click", switchPlayer);
     document.getElementById("restartBtn").addEventListener("click", restartGame);
 });
+
+document.addEventListener("click", () => {
+    if (!soundEnabled) {
+        soundSwitch.play().catch(() => {}); // короткий звук для активации
+        soundEnd.play().catch(() => {});
+        soundEnabled = true;
+    }
+}, { once: true });
 
 function goHome() {
     window.location.href = "index.html";
