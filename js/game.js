@@ -2,6 +2,9 @@ let db;
 let timerInterval = null;
 let wordsData = {};
 let currentWord = "";
+const soundSwitch = new Audio("js/sounds/switch.mp3");
+const soundEnd = new Audio("js/sounds/end.mp3");
+
 
 // Загружаем JSON со словами
 async function loadWords() {
@@ -50,10 +53,12 @@ function goHome() {
 
 function renderPlayers() {
     document.getElementById("p1Name").textContent = db.players.p1.name;
+    document.getElementById("p1NameScore").textContent = db.players.p1.name;
     document.getElementById("p1Time").textContent = db.players.p1.time;
     document.getElementById("p1Score").textContent = db.players.p1.score;
 
     document.getElementById("p2Name").textContent = db.players.p2.name;
+    document.getElementById("p2NameScore").textContent = db.players.p2.name;
     document.getElementById("p2Time").textContent = db.players.p2.time;
     document.getElementById("p2Score").textContent = db.players.p2.score;
 }
@@ -64,6 +69,15 @@ function highlightActive() {
 
     const active = db.gameState.current;
     document.getElementById(active + "Card").classList.add("active");
+
+    // анимация кнопки Ход
+    const switchBtn = document.getElementById("switchBtn");
+    switchBtn.classList.add("active-turn");
+
+    // если таймер остановлен, убираем анимацию
+    if (timerInterval === null) {
+        switchBtn.classList.remove("active-turn");
+    }
 }
 
 function startTimer() {
@@ -98,6 +112,20 @@ function switchPlayer() {
 
     renderPlayers();
 
+    // проигрываем звук переключения
+    soundSwitch.play();
+    
+    // вибрация (мобильные устройства)
+    if (navigator.vibrate) {
+        navigator.vibrate(100); // вибрация 100 мс
+    }
+
+    // кратко убираем и добавляем класс, чтобы анимация обновлялась
+    const btn = document.getElementById("switchBtn");
+    btn.classList.remove("active-turn");
+    void btn.offsetWidth; // триггер перерисовки
+    btn.classList.add("active-turn");
+
     // переключаем активного
     db.gameState.current = active === "p1" ? "p2" : "p1";
     saveDB(db);
@@ -117,11 +145,28 @@ function checkEnd() {
 
         // показываем кнопку перезапуска
         document.getElementById("restartBtn").classList.remove("d-none");
+
+        // проигрываем звук окончания
+        soundEnd.play();
+
+        // вибрация
+        if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]); // короткая пульсация: вибрация-пауза-вибрация
+        }
+
+        document.getElementById("switchBtn").classList.remove("active-turn");
     }
 }
 
-function changeScore(player, delta) {
-    db.players[player].score += delta;
+function renderSessionScore() {
+    document.getElementById("p1SessionScore").textContent = db.sessionScore.p1;
+    document.getElementById("p2SessionScore").textContent = db.sessionScore.p2;
+}
+
+function changeScore(player, delta, manual = false) {
+    if (db.players[player].time > 0 || manual) {
+        db.players[player].score += delta;
+    }
 
     // защита от отрицательных баллов
     if (db.players[player].score < 0) db.players[player].score = 0;
@@ -131,6 +176,11 @@ function changeScore(player, delta) {
 }
 
 function restartGame() {
+    // суммируем текущие очки в общий счет сессии
+    db.sessionScore.p1 += db.players.p1.score;
+    db.sessionScore.p2 += db.players.p2.score;
+
+    // сброс очков текущей игры и таймеров
     db.players.p1.time = 60;
     db.players.p2.time = 60;
     db.players.p1.score = 0;
@@ -139,10 +189,12 @@ function restartGame() {
 
     saveDB(db);
 
+    // показываем кнопки/игру
     document.getElementById("switchBtn").classList.remove("d-none");
     document.getElementById("restartBtn").classList.add("d-none");
 
     renderPlayers();
+    renderSessionScore();
     highlightActive();
     startTimer();
 }

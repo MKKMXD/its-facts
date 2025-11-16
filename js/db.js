@@ -1,17 +1,13 @@
 function initDB() {
-    if (!localStorage.getItem('FACT_DB')) {
-        const initial = {
-            players: {
-                p1: { name: "", time: 10, score: 0 },
-                p2: { name: "", time: 10, score: 0 }
-            },
-            settings: {},
-            gameState: {
-                current: "p1"
-            }
-        };
-        localStorage.setItem('FACT_DB', JSON.stringify(initial));
-    }
+    const initial = {
+        players: {
+            p1: { name: "", time: 60, score: 0 },
+            p2: { name: "", time: 60, score: 0 }
+        },
+        gameState: { current: "p1" },
+        sessionScore: { p1: 0, p2: 0 }
+    };
+    localStorage.setItem('FACT_DB', JSON.stringify(initial));
 }
 
 function getDB() {
