@@ -49,6 +49,14 @@
             50% { transform: scale(1.1); box-shadow: 0 0 20px #0d6efd; }
             100% { transform: scale(1); box-shadow: 0 0 5px #0d6efd; }
         }
+
+        #startBtn {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+        }
     </style>
 </head>
 
@@ -59,6 +67,11 @@
         <div id="wordCard" class="card text-center mb-3 p-3 shadow-sm">
             <div id="currentWord" class="h4 fw-bold"></div>
             <div id="wordFact" class="mt-2 text-muted"></div>
+        </div>
+
+        
+        <div id="startScreen" class="text-center mb-3">
+            <button id="startBtn" class="btn btn-primary btn-lg">Старт</button>
         </div>
 
         <button onclick="goHome()" class="btn btn-outline-secondary w-100 mb-3">На главную</button>

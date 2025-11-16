@@ -25,23 +25,32 @@ async function loadWords() {
 
 document.addEventListener("DOMContentLoaded", () => {
     db = getDB();
-    loadWords();
-
     renderPlayers();
     highlightActive();
-    startTimer();
+
+    const startScreen = document.getElementById("startScreen");
+    const startBtn = document.getElementById("startBtn");
+
+    startBtn.addEventListener("click", () => {
+        // скрываем экран старта
+        startScreen.style.display = "none";
+
+        // запускаем игру
+        loadWords();
+        startTimer();
+        document.getElementById("switchBtn").classList.remove("d-none");
+
+        // разрешаем звук на мобильных
+        if (!soundEnabled) {
+            soundSwitch.play().catch(() => {});
+            soundEnd.play().catch(() => {});
+            soundEnabled = true;
+        }
+    });
 
     document.getElementById("switchBtn").addEventListener("click", switchPlayer);
     document.getElementById("restartBtn").addEventListener("click", restartGame);
 });
-
-document.addEventListener("click", () => {
-    if (!soundEnabled) {
-        soundSwitch.play().catch(() => {}); // короткий звук для активации
-        soundEnd.play().catch(() => {});
-        soundEnabled = true;
-    }
-}, { once: true });
 
 function goHome() {
     window.location.href = "index.html";
