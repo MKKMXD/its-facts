@@ -1,8 +1,11 @@
+
+const timerSec = 10;
+
 function initDB() {
     const initial = {
         players: {
-            p1: { name: "", time: 60, score: 0 },
-            p2: { name: "", time: 60, score: 0 }
+            p1: { name: "", time: timerSec, score: 0 },
+            p2: { name: "", time: timerSec, score: 0 }
         },
         gameState: { current: "p1" },
         sessionScore: { p1: 0, p2: 0 }
@@ -24,8 +27,8 @@ function setPlayers(name1, name2) {
     db.players.p1.name = name1;
     db.players.p2.name = name2;
 
-    db.players.p1.time = 60;
-    db.players.p2.time = 60;
+    db.players.p1.time = timerSec;
+    db.players.p2.time = timerSec;
 
     db.players.p1.score = 0;
     db.players.p2.score = 0;

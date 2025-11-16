@@ -34,19 +34,6 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("restartBtn").addEventListener("click", restartGame);
 });
 
-function checkEnd() {
-    if (db.players.p1.time <= 0 && db.players.p2.time <= 0) {
-        clearInterval(timerInterval);
-        timerInterval = null;
-
-        document.getElementById("switchBtn").classList.add("d-none");
-        document.getElementById("restartBtn").classList.remove("d-none");
-
-        // показываем факт о слове
-        document.getElementById("wordFact").textContent = wordsData[currentWord] || "";
-    }
-}
-
 function goHome() {
     window.location.href = "index.html";
 }
@@ -109,7 +96,8 @@ function switchPlayer() {
     const active = db.gameState.current;
 
     // начисляем очко активному игроку
-    db.players[active].score++;
+    changeScore(active, 1);
+
     saveDB(db);
 
     renderPlayers();
@@ -156,6 +144,9 @@ function checkEnd() {
             navigator.vibrate([200, 100, 200]); // короткая пульсация: вибрация-пауза-вибрация
         }
 
+        // показываем факт о слове
+        document.getElementById("wordFact").textContent = wordsData[currentWord] || "";
+
         document.getElementById("switchBtn").classList.remove("active-turn");
     }
 }
@@ -183,8 +174,8 @@ function restartGame() {
     db.sessionScore.p2 += db.players.p2.score;
 
     // сброс очков текущей игры и таймеров
-    db.players.p1.time = 60;
-    db.players.p2.time = 60;
+    db.players.p1.time = timerSec;
+    db.players.p2.time = timerSec;
     db.players.p1.score = 0;
     db.players.p2.score = 0;
 
@@ -199,6 +190,7 @@ function restartGame() {
     document.getElementById("switchBtn").classList.remove("d-none");
     document.getElementById("restartBtn").classList.add("d-none");
 
+    loadWords();
     renderPlayers();
     renderSessionScore();
     highlightActive();
