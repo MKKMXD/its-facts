@@ -31,6 +31,7 @@ function setPlayers(name1, name2) {
     db.players.p2.score = 0;
 
     db.gameState.current = "p1";
+    db.nextFirstPlayer = "p2";         // следующий первый — p2
 
     saveDB(db);
 }

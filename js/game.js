@@ -99,6 +99,8 @@ function startTimer() {
             switchPlayer();
         }
     }, 1000);
+    
+    highlightActive();
 }
 
 function switchPlayer() {
@@ -185,7 +187,11 @@ function restartGame() {
     db.players.p2.time = 60;
     db.players.p1.score = 0;
     db.players.p2.score = 0;
-    db.gameState.current = "p1";
+
+    db.gameState.current = db.nextFirstPlayer;
+
+    // меняем nextFirstPlayer на противоположного
+    db.nextFirstPlayer = db.nextFirstPlayer === "p1" ? "p2" : "p1";
 
     saveDB(db);
 
