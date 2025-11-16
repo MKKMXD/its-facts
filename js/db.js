@@ -1,5 +1,5 @@
 
-const timerSec = 10;
+const timerSec = 60;
 
 function initDB() {
     const initial = {
