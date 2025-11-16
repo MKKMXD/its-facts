@@ -45,10 +45,14 @@
 
     <div class="container mt-4" style="max-width: 480px;">
 
-        <button onclick="goHome()" class="btn btn-outline-secondary w-100 mb-3">
-            На главную
-        </button>
+        <div id="wordCard" class="card text-center mb-3 p-3 shadow-sm">
+            <div id="currentWord" class="h4 fw-bold"></div>
+            <div id="wordFact" class="mt-2 text-muted"></div>
+        </div>
 
+        <button onclick="goHome()" class="btn btn-outline-secondary w-100 mb-3">На главную</button>
+
+        <!-- Игроки -->
         <div id="p1Card" class="player-card">
             <div class="player-name" id="p1Name"></div>
             <div class="timer" id="p1Time"></div>
@@ -69,7 +73,6 @@
             </div>
         </div>
 
-
         <div class="d-flex justify-content-center mt-4">
             <button id="switchBtn" class="btn btn-primary switch-btn">Ход</button>
         </div>
@@ -77,8 +80,8 @@
         <div class="d-flex justify-content-center mt-3">
             <button id="restartBtn" class="btn btn-success d-none">Перезапуск</button>
         </div>
-
     </div>
+
 
 
     <script src="js/db.js"></script>

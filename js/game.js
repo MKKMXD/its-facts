@@ -1,8 +1,27 @@
 let db;
 let timerInterval = null;
+let wordsData = {};
+let currentWord = "";
+
+// Загружаем JSON со словами
+async function loadWords() {
+    try {
+        const response = await fetch("js/words.json");
+        wordsData = await response.json();
+
+        // Выбираем случайное слово
+        const keys = Object.keys(wordsData);
+        currentWord = keys[Math.floor(Math.random() * keys.length)];
+        document.getElementById("currentWord").textContent = currentWord;
+        document.getElementById("wordFact").textContent = ""; // факт пока скрыт
+    } catch (err) {
+        console.error("Ошибка загрузки слов:", err);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     db = getDB();
+    loadWords();
 
     renderPlayers();
     highlightActive();
@@ -11,6 +30,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("switchBtn").addEventListener("click", switchPlayer);
     document.getElementById("restartBtn").addEventListener("click", restartGame);
 });
+
+function checkEnd() {
+    if (db.players.p1.time <= 0 && db.players.p2.time <= 0) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+
+        document.getElementById("switchBtn").classList.add("d-none");
+        document.getElementById("restartBtn").classList.remove("d-none");
+
+        // показываем факт о слове
+        document.getElementById("wordFact").textContent = wordsData[currentWord] || "";
+    }
+}
 
 function goHome() {
     window.location.href = "index.html";
@@ -99,8 +131,8 @@ function changeScore(player, delta) {
 }
 
 function restartGame() {
-    db.players.p1.time = 10;
-    db.players.p2.time = 10;
+    db.players.p1.time = 60;
+    db.players.p2.time = 60;
     db.players.p1.score = 0;
     db.players.p2.score = 0;
     db.gameState.current = "p1";

@@ -28,8 +28,8 @@ function setPlayers(name1, name2) {
     db.players.p1.name = name1;
     db.players.p2.name = name2;
 
-    db.players.p1.time = 10;
-    db.players.p2.time = 10;
+    db.players.p1.time = 60;
+    db.players.p2.time = 60;
 
     db.players.p1.score = 0;
     db.players.p2.score = 0;
